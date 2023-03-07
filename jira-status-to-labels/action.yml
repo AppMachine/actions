@@ -1,0 +1,14 @@
+name: 'Sync Github with Jira'
+description: 'Sync Github issues with Jira'
+author: 'Eric Fennis'
+inputs:
+  repo-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: false
+    default: ${{ github.token }}
+  labels:
+    description: 'Labels to process'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/main.js'
