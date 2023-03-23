@@ -1,0 +1,74 @@
+name: 'Jira PR Approved'
+description: 'Transition jira ticket and add labels'
+author: 'Eric Fennis'
+
+inputs:
+  jira-base-url:
+    description: 'Jira Base Url'
+    required: true
+
+  jira-user-email:
+    description: 'Jira user email'
+    required: true
+
+  jira-api-token:
+    description: 'Jira API token'
+    required: true
+
+  minimum-approvals:
+    description: 'Minimum approvals for transitioning Jira Tickets and adding labels to PR'
+    required: false
+    default: 2
+
+  jira-ticket-transition:
+    description: 'Jira Ticket transition'
+    required: true
+
+  add-labels:
+    description: 'Coma separated, labels to add when a PR is approved'
+    required: true
+
+  remove-labels:
+    description: 'Coma separated, labels to remove when a PR is approved'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check reviews
+      uses: buildsville/review-summary@v1.0.1
+      id: summary
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Login
+      if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }}
+      uses: atlassian/gajira-login@master
+      env:
+        JIRA_BASE_URL: ${{ inputs.jira-base-url }}
+        JIRA_USER_EMAIL: ${{ inputs.jira-user-email }}
+        JIRA_API_TOKEN: ${{ inputs.jira-api-token }}
+
+    - name: Find in commit messages
+      if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }}
+      uses: atlassian/gajira-find-issue-key@master
+      id: issueKey
+      continue-on-error: true
+      with:
+        string: '${{ github.event.pull_request.title }} ${{ github.event.pull_request.head.ref }}'
+
+    - name: Transition issue
+      if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }} && steps.issueKey.outcome == 'success'
+      uses: atlassian/gajira-transition@master
+      continue-on-error: true
+      id: transitionTicket
+      with:
+        issue: ${{ steps.issueKey.outputs.issue }}
+        transition: ${{ inputs.jira-ticket-transition }}
+
+    - name: Add labels
+      if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }} && steps.transitionTicket.outcome == 'success'
+      uses: andymckay/labeler@master
+      with:
+        add-labels: ${{ inputs.add-labels }}
+        remove-labels: ${{ inputs.remove-labels }}
