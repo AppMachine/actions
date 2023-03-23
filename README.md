@@ -32,7 +32,11 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 ```
 
-## Jira PR Approved Action
+## Jira PR Approved Action (This one does not work yet!)
+
+> **Warning**
+> This action is not working yet, unfortunately composite actions does not support if statements yet.
+> See: https://stackoverflow.com/questions/65473359/github-action-unable-to-add-if-condition-in-steps
 
 This action can transition Jira tickets and add labels to the PR
 
