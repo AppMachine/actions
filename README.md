@@ -1,6 +1,6 @@
 # Actions
 
-Shared Github Actions of AppMachine
+Open-source Shared Github Actions of AppMachine.
 
 ## Jira Status to labels
 
@@ -31,12 +31,12 @@ jobs:
           node-version: 16
 
       - name: Check PRS
-        uses: 'AppMachine/actions/jira-status-to-labels'
+        uses: 'AppMachine/actions/jira-status-to-labels@main'
         with:
           labels: 'QA ready on Preview, QA Preview OK, Merge with Staging, QA Fail'
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
 ```
+
