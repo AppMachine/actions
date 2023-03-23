@@ -20,6 +20,10 @@ inputs:
     required: false
     default: 2
 
+  jira-ticket-transition:
+    description: 'Jira Ticket transition'
+    required: true
+
   add-labels:
     description: 'Coma separated, labels to add when a PR is approved'
     required: true
@@ -41,9 +45,9 @@ runs:
       if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }}
       uses: atlassian/gajira-login@master
       env:
-        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        JIRA_BASE_URL: ${{ inputs.jira-base-url }}
+        JIRA_USER_EMAIL: ${{ inputs.jira-user-email }}
+        JIRA_API_TOKEN: ${{ inputs.jira-api-token }}
 
     - name: Find in commit messages
       if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }}
@@ -60,11 +64,11 @@ runs:
       id: transitionTicket
       with:
         issue: ${{ steps.issueKey.outputs.issue }}
-        transition: "Review pass"
+        transition: ${{ inputs.jira-ticket-transition }}
 
     - name: Add labels
       if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }} && steps.transitionTicket.outcome == 'success'
       uses: andymckay/labeler@master
       with:
-        add-labels: ${{ env.QA_READY_PREVIEW_LABEL }}
-        remove-labels: ${{ env.CHANGES_REQUESTED_LABEL }}
+        add-labels: ${{ inputs.add-labels }}
+        remove-labels: ${{ inputs.remove-labels }}
