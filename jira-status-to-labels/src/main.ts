@@ -7,7 +7,7 @@ import findIssue from './helpers/findIssue'
 
 async function start() {
   const labelsConfig = core.getInput('labels')
-  const token = core.getInput('repo-token')
+  const token = core.getInput('github-token')
   const statusLabels = labelsConfig.split(',').map(label => label.trim())
 
   // For debugging

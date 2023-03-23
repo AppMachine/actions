@@ -3,6 +3,11 @@ description: 'Transition jira ticket and add labels'
 author: 'Eric Fennis'
 
 inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: false
+    default: ${{ github.token }}
+
   jira-base-url:
     description: 'Jira Base Url'
     required: true
@@ -18,7 +23,7 @@ inputs:
   minimum-approvals:
     description: 'Minimum approvals for transitioning Jira Tickets and adding labels to PR'
     required: false
-    default: 2
+    default: '2'
 
   jira-ticket-transition:
     description: 'Jira Ticket transition'
@@ -39,7 +44,7 @@ runs:
       uses: buildsville/review-summary@v1.0.1
       id: summary
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ inputs.github-token }}
 
     - name: Login
       if: steps.summary.outputs.approved >= ${{ inputs.minimum-approvals }}

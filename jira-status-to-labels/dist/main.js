@@ -13257,7 +13257,7 @@ var findIssue_default = findIssue;
 // src/main.ts
 async function start() {
   const labelsConfig = core.getInput("labels");
-  const token = core.getInput("repo-token");
+  const token = core.getInput("github-token");
   const statusLabels = labelsConfig.split(",").map((label) => label.trim());
   const pulls = await getAllOpenPrs_default(token);
   const pullPromises = pulls.map(async (pull) => {
