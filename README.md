@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: On PR Approved
-        uses: AppMachine/actions/jira-status-to-labels@main
+        uses: AppMachine/actions/jira-pr-approved@main
         with:
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
           jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
